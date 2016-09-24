@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Toppr</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ctc">INR 8L-20L</string>
+    <string name="cardview_image_description">Image View</string>
+    <string name="experience">Experience: </string>
+    <string name="ctc_string">CTC: INR 8L-20L</string>
+    <string name="share_menu_option">Share</string>
+    <string name="settings">Settings</string>
+</resources>
