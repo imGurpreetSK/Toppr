@@ -95,7 +95,7 @@ public class ListFragment extends Fragment {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    for (int i = 0; i < response.length(); i++) {
+                                    for (int i = 0; i < 12; i++) {
                                         JSONObject obj = response.getJSONArray("websites").getJSONObject(i);
                                         String id = obj.getString("id");
                                         String name = obj.getString("name");

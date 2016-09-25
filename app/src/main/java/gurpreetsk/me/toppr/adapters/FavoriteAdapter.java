@@ -1,6 +1,7 @@
 package gurpreetsk.me.toppr.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import gurpreetsk.me.toppr.R;
+import gurpreetsk.me.toppr.activities.DetailActivity;
 import gurpreetsk.me.toppr.model.Data;
 import gurpreetsk.me.toppr.model.Database;
 
@@ -63,6 +65,15 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyView
                 Database handler= new Database(context);
                 handler.update("false", data.getId());
                 data.setFav("false");
+            }
+        });
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, data);
+                context.startActivity(intent);
             }
         });
 
