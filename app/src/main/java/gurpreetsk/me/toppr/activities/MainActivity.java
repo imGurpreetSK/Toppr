@@ -19,23 +19,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        MenuItem item =  menu.findItem(R.id.shareActionProvider);
-        ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra("App created by Gurpreet Singh. (gurpreetsk@hotmail.com)"));
-        if (sap != null)
-            sap.setShareIntent(intent);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
 }

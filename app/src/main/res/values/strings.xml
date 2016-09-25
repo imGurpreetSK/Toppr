@@ -9,4 +9,11 @@
     <string name="ctc_string">CTC: INR 8L-20L</string>
     <string name="share_menu_option">Share</string>
     <string name="settings">Settings</string>
+    <string name="favoriteimagebutton">FavoriteImageButton</string>
+    <string name="sort_by">Preferences</string>
+    <string name="settings_key">settingsKey</string>
+    <string name="all">all</string>
+    <string name="search">Search</string>
+    <string name="ok">OK</string>
+    <string name="go">GO</string>
 </resources>

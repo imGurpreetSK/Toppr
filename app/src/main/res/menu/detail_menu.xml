@@ -5,10 +5,14 @@
         android:id="@+id/shareActionProvider"
         android:title="@string/share_menu_option"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/settings_overflow"
+        android:title="@string/search"
+        android:icon="@drawable/search_icon"
+        app:showAsAction="ifRoom"
+        android:id="@+id/search_icon"/>
+    <item
         android:title="@string/settings"
         app:showAsAction="never"
-        android:orderInCategory="100"/>
+        android:id="@+id/settings_overflow" />
 </menu>

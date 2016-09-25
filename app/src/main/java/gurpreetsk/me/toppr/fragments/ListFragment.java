@@ -1,22 +1,35 @@
 package gurpreetsk.me.toppr.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,6 +44,7 @@ import java.util.ArrayList;
 
 import gurpreetsk.me.toppr.R;
 import gurpreetsk.me.toppr.activities.DetailActivity;
+import gurpreetsk.me.toppr.activities.SettingsActivity;
 import gurpreetsk.me.toppr.adapters.DataAdapter;
 import gurpreetsk.me.toppr.model.Data;
 
@@ -40,55 +54,106 @@ public class ListFragment extends Fragment {
 
     private static final String TAG = ListFragment.class.getSimpleName();
     RecyclerView recyclerView;
+    ImageButton fav;
     DataAdapter adapter;
     ArrayList<Data> events = new ArrayList<>();
+    String search_keyword = "";
 
-    public ListFragment() {}
+    public ListFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public void onStart() {
         super.onStart();
+        if (events != null)
+            events.clear();
         fetchJson();
     }
 
     private void fetchJson() {
-        if(isNetworkConnected()){
+        if (isNetworkConnected()) {
             Uri uri = Uri.parse("https://hackerearth.0x10.info/api/toppr_events?type=json&query=list_events");
             String url = uri.toString();
 
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            final String get = prefs.getString(getString(R.string.settings_key), getString(R.string.all));
+
             RequestQueue queue = Volley.newRequestQueue(getActivity());
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                    new Response.Listener<JSONObject>() {
+            if (get.equals("all")) {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
 
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                for (int i = 0; i < 12; i++) {
-                                    JSONObject obj = response.getJSONArray("websites").getJSONObject(i);
-                                    String id = obj.getString("id");
-                                    String name = obj.getString("name");
-                                    String image = obj.getString("image");
-                                    String category = obj.getString("category");
-                                    String description = obj.getString("description");
-                                    String experience = obj.getString("experience");
-                                    events.add(new Data(id, name, image, category, description, experience));
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    for (int i = 0; i < 12; i++) {
+                                        JSONObject obj = response.getJSONArray("websites").getJSONObject(i);
+                                        String id = obj.getString("id");
+                                        String name = obj.getString("name");
+                                        String image = obj.getString("image");
+                                        String category = obj.getString("category");
+                                        String description = obj.getString("description");
+                                        String experience = obj.getString("experience");
+                                        events.add(new Data(id, name, image, category, description, experience));
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                                adapter.notifyDataSetChanged();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
-                        }
-                    },
+                        },
 
-                    new Response.ErrorListener() {
+                        new Response.ErrorListener() {
 
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, error.toString());
-                        }
-                    });
-            queue.add(request);
-        }else{
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e(TAG, error.toString());
+                            }
+                        });
+
+                queue.add(request);
+            } else {
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    for (int i = 0; i < 12; i++) {
+                                        JSONObject obj = response.getJSONArray("websites").getJSONObject(i);
+                                        String id = obj.getString("id");
+                                        String name = obj.getString("name");
+                                        String image = obj.getString("image");
+                                        String category = obj.getString("category");
+                                        String description = obj.getString("description");
+                                        String experience = obj.getString("experience");
+                                        if (category.equals(get))
+                                            events.add(new Data(id, name, image, category, description, experience));
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+
+                        new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e(TAG, error.toString());
+                            }
+                        });
+
+                queue.add(request);
+            }
+        } else {
             makeText(getContext(), "Please connect to Internet and try again.", Toast.LENGTH_LONG).show();
         }
     }
@@ -99,6 +164,7 @@ public class ListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
+        fav = (ImageButton) v.findViewById(R.id.favorite_button);
         adapter = new DataAdapter(events, getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -110,7 +176,6 @@ public class ListFragment extends Fragment {
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, events.get(position));
                 startActivity(intent);
-                makeText(getContext(), position+" clicked.", Toast.LENGTH_SHORT).show();
             }
         }));
 
@@ -163,6 +228,30 @@ public class ListFragment extends Fragment {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.detail_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.settings_overflow:
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                break;
+            case R.id.search_icon:
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.search)
+                        .customView(R.layout.search_dialog, true)
+                        .positiveText(R.string.go)
+                        .show();
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 
 }

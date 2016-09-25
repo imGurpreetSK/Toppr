@@ -29,7 +29,8 @@ public class DetailFragment extends Fragment {
     TextView title, description, experience, ctc;
     ImageView imageView;
 
-    public DetailFragment() {}
+    public DetailFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,8 +48,11 @@ public class DetailFragment extends Fragment {
         Data data = getActivity().getIntent().getParcelableExtra(Intent.EXTRA_TEXT);
         title.setText(data.getName());
         description.setText(data.getDescription());
-        experience.setText(getResources().getText(R.string.experience) + data.getExperience());
-        ctc.setText(getResources().getText(R.string.ctc_string));
+        experience.setText(getResources().getText(R.string.experience) + " " + data.getExperience());
+        if (data.getCategory().equals("HIRING"))
+            ctc.setText(getResources().getText(R.string.ctc_string));
+        else
+            ctc.setText("");
         String image_link = data.getImage().replace("\\", "");
         Uri builder = Uri.parse(image_link).buildUpon().build();
         Picasso.with(getContext()).load(builder).into(imageView);

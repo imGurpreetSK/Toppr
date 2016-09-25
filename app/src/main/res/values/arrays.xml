@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="settings_entries">
+        <item>All</item>
+        <item>Hiring</item>
+        <item>Bot</item>
+        <item>Hackathon</item>
+    </string-array>
+    <string-array name="settings_entries_values">
+        <item>all</item>
+        <item>HIRING</item>
+        <item>BOT</item>
+        <item>HACKATHON</item>
+    </string-array>
+</resources>

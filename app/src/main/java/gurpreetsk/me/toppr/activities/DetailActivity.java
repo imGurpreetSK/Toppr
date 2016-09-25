@@ -21,7 +21,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
         MenuItem item =  menu.findItem(R.id.shareActionProvider);
         ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         Intent intent = new Intent(Intent.ACTION_SEND);
