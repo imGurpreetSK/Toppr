@@ -10,12 +10,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -25,7 +29,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -57,10 +64,10 @@ public class ListFragment extends Fragment {
     ImageButton fav;
     DataAdapter adapter;
     ArrayList<Data> events = new ArrayList<>();
-    String search_keyword = "";
-    SQLiteOpenHelper database;
     SQLiteDatabase db;
     Database handler;
+    private EditText search;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public ListFragment() {
     }
@@ -170,14 +177,65 @@ public class ListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-//        fav = (ImageButton) v.findViewById(R.id.favorite_button);
+        search = (EditText) v.findViewById(R.id.search);
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         adapter = new DataAdapter(events, getContext());
         handler = new Database(getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+        addTextListener();
+        this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fetchJson();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 3000);
+            }
+        });
         return v;
     }
+
+    public void addTextListener() {
+
+        search.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence query, int start, int before, int count) {
+
+                query = query.toString().toLowerCase();
+
+                ArrayList<Data> inter = new ArrayList<>();
+
+                for (int i = 0; i < events.size(); i++) {
+
+                    final String searchname = events.get(i).getName().toLowerCase();
+                    final String searchcategory = events.get(i).getCategory().toLowerCase();
+                    if (searchname.contains(query) || searchcategory.contains(query)) {
+                        inter.add(events.get(i));
+                    }
+                }
+
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter = new DataAdapter(inter, getContext());
+//                adapter = new ListAdapter(, sid, sname, simage, scategory, sdescription, sexperience, sfavourite);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm =
