@@ -18,4 +18,7 @@
     <string name="go">GO</string>
     <string name="favorite">Favorites</string>
     <string name="demographics">Demographics</string>
+    <string name="bot_wars">Bot wars</string>
+    <string name="hackathons">Hackathons</string>
+    <string name="hiring_challenges">Hiring Challenges</string>
 </resources>
