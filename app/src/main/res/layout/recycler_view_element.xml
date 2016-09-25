@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/tools"
+    android:id="@+id/mainCardView"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:minHeight="100dp"
@@ -52,14 +53,22 @@
             android:layout_gravity="center"
             android:layout_marginLeft="8dp"
             android:layout_marginBottom="4dp"/>
-<!--
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/favorite_button"
+
+        <com.like.LikeButton
+            app:icon_type="heart"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/fav_btn"
+            app:circle_start_color="@color/colorPrimary"
+            app:like_drawable="@drawable/thumb_on"
+            app:unlike_drawable="@drawable/thumb_off"
+            app:dots_primary_color="@color/colorAccent"
+            app:dots_secondary_color="@color/colorPrimary"
+            app:circle_end_color="@color/colorAccent"
+            app:icon_size="25dp"
+            app:liked="true"
+            app:anim_scale_factor="2"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:contentDescription="@string/favoriteimagebutton" />
--->
+            app:is_enabled="false" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 
 import gurpreetsk.me.toppr.R;
 import gurpreetsk.me.toppr.activities.DetailActivity;
+import gurpreetsk.me.toppr.activities.FavoriteActivity;
 import gurpreetsk.me.toppr.activities.SettingsActivity;
 import gurpreetsk.me.toppr.adapters.DataAdapter;
 import gurpreetsk.me.toppr.model.Data;
@@ -59,6 +60,7 @@ public class ListFragment extends Fragment {
     String search_keyword = "";
     SQLiteOpenHelper database;
     SQLiteDatabase db;
+    Database handler;
 
     public ListFragment() {
     }
@@ -93,7 +95,7 @@ public class ListFragment extends Fragment {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    for (int i = 0; i < 12; i++) {
+                                    for (int i = 0; i < response.length(); i++) {
                                         JSONObject obj = response.getJSONArray("websites").getJSONObject(i);
                                         String id = obj.getString("id");
                                         String name = obj.getString("name");
@@ -101,6 +103,7 @@ public class ListFragment extends Fragment {
                                         String category = obj.getString("category");
                                         String description = obj.getString("description");
                                         String experience = obj.getString("experience");
+                                        handler.addEvents(new Data(id, name, image, category, description, experience, "false"));
                                         events.add(new Data(id, name, image, category, description, experience, "false"));
                                     }
                                     adapter.notifyDataSetChanged();
@@ -134,8 +137,10 @@ public class ListFragment extends Fragment {
                                         String category = obj.getString("category");
                                         String description = obj.getString("description");
                                         String experience = obj.getString("experience");
-                                        if (category.equals(get))
+                                        if (category.equals(get)) {
+                                            handler.addEvents(new Data(id, name, image, category, description, experience, "false"));
                                             events.add(new Data(id, name, image, category, description, experience, "false"));
+                                        }
                                     }
                                     adapter.notifyDataSetChanged();
                                 } catch (JSONException e) {
@@ -167,83 +172,11 @@ public class ListFragment extends Fragment {
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
 //        fav = (ImageButton) v.findViewById(R.id.favorite_button);
         adapter = new DataAdapter(events, getContext());
+        handler = new Database(getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Intent intent = new Intent(getContext(), DetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, events.get(position));
-                startActivity(intent);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-                Vibrator vibe = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-                vibe.vibrate(50);
-                database = new Database(getContext());
-                db = database.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put(Database.COLUMN_ID, events.get(position).getId());
-                values.put(Database.COLUMN_NAME, events.get(position).getName());
-                values.put(Database.COLUMN_IMAGE, events.get(position).getImage());
-                values.put(Database.COLUMN_CATEGORY, events.get(position).getCategory());
-                values.put(Database.COLUMN_DESCRIPTION, events.get(position).getDescription());
-                values.put(Database.COLUMN_EXPERIENCE, events.get(position).getExperience());
-                values.put(Database.COLUMN_FAVORITE, events.get(position).getFav());
-                db.insert(Database.TABLE_NAME, null, values);
-                Toast.makeText(getContext(), "Favorite added!", Toast.LENGTH_SHORT).show();
-
-            }
-        }));
         return v;
-    }
-
-    public interface ClickListener {
-        void onClick(View view, int position);
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    super.onLongPress(e);
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        }
     }
 
     private boolean isNetworkConnected() {
@@ -267,6 +200,9 @@ public class ListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.settings_overflow:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
+                break;
+            case R.id.favorite_icon:
+                startActivity(new Intent(getContext(), FavoriteActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

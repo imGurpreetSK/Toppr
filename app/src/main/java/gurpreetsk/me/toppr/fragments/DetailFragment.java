@@ -47,6 +47,7 @@ public class DetailFragment extends Fragment {
 
         Data data = getActivity().getIntent().getParcelableExtra(Intent.EXTRA_TEXT);
         title.setText(data.getName());
+        getActivity().setTitle(data.getName());
         description.setText(data.getDescription());
         experience.setText(getResources().getText(R.string.experience) + " " + data.getExperience());
         if (data.getCategory().equals("HIRING"))

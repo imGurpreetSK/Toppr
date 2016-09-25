@@ -6,11 +6,11 @@
         android:title="@string/share_menu_option"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="ifRoom" />
-    <!--<item
-        android:title="@string/search"
-        android:icon="@drawable/search_icon"
+    <item
+        android:title="@string/favorite"
+        android:icon="@drawable/heart"
         app:showAsAction="ifRoom"
-        android:id="@+id/search_icon"/>-->
+        android:id="@+id/favorite_icon"/>
     <item
         android:title="@string/settings"
         app:showAsAction="never"

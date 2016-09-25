@@ -18,7 +18,6 @@ public class Database extends SQLiteOpenHelper {
     public static final int TABLE_VERSION = 1;
 
     public static final String TABLE_NAME = "TOPPR";
-    //    public static final String FAV_TABLE_NAME = "FAVORITE";
     public static final String COLUMN_NAME = "NAME";
     public static final String COLUMN_DESCRIPTION = "DESCRIPTION";
     public static final String COLUMN_EXPERIENCE = "EXPERIENCE";
@@ -48,7 +47,6 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        // Create tables again
         onCreate(sqLiteDatabase);
     }
 
@@ -82,7 +80,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<Data> getAllEvents() {
+    public ArrayList<Data> getAllData() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Data> data = null;
         try {
