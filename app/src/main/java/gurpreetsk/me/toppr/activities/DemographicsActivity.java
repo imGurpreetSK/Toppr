@@ -43,7 +43,7 @@ public class DemographicsActivity extends AppCompatActivity {
 
         PieSlice slice = new PieSlice();
         slice.setColor(getResources().getColor(R.color.color1));
-        slice.setSelectedColor(getResources().getColor(R.color.color1));
+        slice.setSelectedColor(getResources().getColor(R.color.colorAccent));
         slice.setValue(hackathon);
         slice.setTitle("Hackathon");
         pg.addSlice(slice);
