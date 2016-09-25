@@ -2,18 +2,18 @@ package gurpreetsk.me.toppr.fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,11 +25,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +45,7 @@ import gurpreetsk.me.toppr.activities.DetailActivity;
 import gurpreetsk.me.toppr.activities.SettingsActivity;
 import gurpreetsk.me.toppr.adapters.DataAdapter;
 import gurpreetsk.me.toppr.model.Data;
+import gurpreetsk.me.toppr.model.Database;
 
 import static android.widget.Toast.makeText;
 
@@ -58,6 +57,8 @@ public class ListFragment extends Fragment {
     DataAdapter adapter;
     ArrayList<Data> events = new ArrayList<>();
     String search_keyword = "";
+    SQLiteOpenHelper database;
+    SQLiteDatabase db;
 
     public ListFragment() {
     }
@@ -100,7 +101,7 @@ public class ListFragment extends Fragment {
                                         String category = obj.getString("category");
                                         String description = obj.getString("description");
                                         String experience = obj.getString("experience");
-                                        events.add(new Data(id, name, image, category, description, experience));
+                                        events.add(new Data(id, name, image, category, description, experience, "false"));
                                     }
                                     adapter.notifyDataSetChanged();
                                 } catch (JSONException e) {
@@ -134,7 +135,7 @@ public class ListFragment extends Fragment {
                                         String description = obj.getString("description");
                                         String experience = obj.getString("experience");
                                         if (category.equals(get))
-                                            events.add(new Data(id, name, image, category, description, experience));
+                                            events.add(new Data(id, name, image, category, description, experience, "false"));
                                     }
                                     adapter.notifyDataSetChanged();
                                 } catch (JSONException e) {
@@ -164,7 +165,7 @@ public class ListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-        fav = (ImageButton) v.findViewById(R.id.favorite_button);
+//        fav = (ImageButton) v.findViewById(R.id.favorite_button);
         adapter = new DataAdapter(events, getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -177,13 +178,33 @@ public class ListFragment extends Fragment {
                 intent.putExtra(Intent.EXTRA_TEXT, events.get(position));
                 startActivity(intent);
             }
-        }));
 
+            @Override
+            public void onLongClick(View view, int position) {
+
+                Vibrator vibe = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibe.vibrate(50);
+                database = new Database(getContext());
+                db = database.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(Database.COLUMN_ID, events.get(position).getId());
+                values.put(Database.COLUMN_NAME, events.get(position).getName());
+                values.put(Database.COLUMN_IMAGE, events.get(position).getImage());
+                values.put(Database.COLUMN_CATEGORY, events.get(position).getCategory());
+                values.put(Database.COLUMN_DESCRIPTION, events.get(position).getDescription());
+                values.put(Database.COLUMN_EXPERIENCE, events.get(position).getExperience());
+                values.put(Database.COLUMN_FAVORITE, events.get(position).getFav());
+                db.insert(Database.TABLE_NAME, null, values);
+                Toast.makeText(getContext(), "Favorite added!", Toast.LENGTH_SHORT).show();
+
+            }
+        }));
         return v;
     }
 
     public interface ClickListener {
         void onClick(View view, int position);
+        void onLongClick(View view, int position);
     }
 
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
@@ -197,6 +218,11 @@ public class ListFragment extends Fragment {
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
                 }
             });
         }
@@ -217,7 +243,6 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
         }
     }
 
@@ -243,12 +268,6 @@ public class ListFragment extends Fragment {
             case R.id.settings_overflow:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
                 break;
-            case R.id.search_icon:
-                new MaterialDialog.Builder(getContext())
-                        .title(R.string.search)
-                        .customView(R.layout.search_dialog, true)
-                        .positiveText(R.string.go)
-                        .show();
         }
         return super.onOptionsItemSelected(item);
 

@@ -2,6 +2,7 @@ package gurpreetsk.me.toppr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.StrictMode;
 
 /**
  * Created by Gurpreet on 24/09/16.
@@ -9,15 +10,16 @@ import android.os.Parcelable;
 
 public class Data implements Parcelable {
 
-    String id, name, image, category, description, experience;
+    String id, name, image, category, description, experience, fav;
 
-    public Data(String id, String name, String image, String category, String description, String experience) {
+    public Data(String id, String name, String image, String category, String description, String experience, String fav) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.category = category;
         this.description = description;
         this.experience = experience;
+        this.fav = fav;
     }
 
     public String getId() {
@@ -66,6 +68,14 @@ public class Data implements Parcelable {
 
     public void setExperience(String experience) {
         this.experience = experience;
+    }
+
+    public String getFav() {
+        return fav;
+    }
+
+    public void setFav(String fav) {
+        this.fav = fav;
     }
 
     public Data(Parcel in) {
