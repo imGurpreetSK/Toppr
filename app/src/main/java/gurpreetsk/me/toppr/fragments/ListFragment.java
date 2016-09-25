@@ -1,17 +1,14 @@
 package gurpreetsk.me.toppr.fragments;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,18 +18,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -48,7 +42,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import gurpreetsk.me.toppr.R;
-import gurpreetsk.me.toppr.activities.DetailActivity;
+import gurpreetsk.me.toppr.activities.DemographicsActivity;
 import gurpreetsk.me.toppr.activities.FavoriteActivity;
 import gurpreetsk.me.toppr.activities.SettingsActivity;
 import gurpreetsk.me.toppr.adapters.DataAdapter;
@@ -213,23 +207,17 @@ public class ListFragment extends Fragment {
             }
 
             public void onTextChanged(CharSequence query, int start, int before, int count) {
-
                 query = query.toString().toLowerCase();
-
                 ArrayList<Data> inter = new ArrayList<>();
-
                 for (int i = 0; i < events.size(); i++) {
-
                     final String searchname = events.get(i).getName().toLowerCase();
                     final String searchcategory = events.get(i).getCategory().toLowerCase();
                     if (searchname.contains(query) || searchcategory.contains(query)) {
                         inter.add(events.get(i));
                     }
                 }
-
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 adapter = new DataAdapter(inter, getContext());
-//                adapter = new ListAdapter(, sid, sname, simage, scategory, sdescription, sexperience, sfavourite);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
@@ -240,9 +228,7 @@ public class ListFragment extends Fragment {
     private boolean isNetworkConnected() {
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
@@ -262,6 +248,11 @@ public class ListFragment extends Fragment {
             case R.id.favorite_icon:
                 startActivity(new Intent(getContext(), FavoriteActivity.class));
                 break;
+            case R.id.pieChart:
+                Intent intent = new Intent(getContext(), DemographicsActivity.class);
+                intent.putExtra("DATA", events);
+                startActivity(intent);
+
         }
         return super.onOptionsItemSelected(item);
 

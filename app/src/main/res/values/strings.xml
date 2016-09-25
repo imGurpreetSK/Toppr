@@ -17,4 +17,5 @@
     <string name="ok">OK</string>
     <string name="go">GO</string>
     <string name="favorite">Favorites</string>
+    <string name="demographics">Demographics</string>
 </resources>

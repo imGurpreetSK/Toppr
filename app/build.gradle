@@ -33,5 +33,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
     compile 'com.github.jd-alexander:LikeButton:0.2.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.0-beta1'
     testCompile 'junit:junit:4.12'
+    compile project(':HoloGraphLibrary')
 }
