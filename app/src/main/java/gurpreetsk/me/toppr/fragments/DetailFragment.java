@@ -11,6 +11,7 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import gurpreetsk.me.toppr.R;
+import gurpreetsk.me.toppr.activities.DemographicsActivity;
+import gurpreetsk.me.toppr.activities.FavoriteActivity;
+import gurpreetsk.me.toppr.activities.SettingsActivity;
 import gurpreetsk.me.toppr.model.Data;
 
 public class DetailFragment extends Fragment {
@@ -36,6 +40,24 @@ public class DetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.detail_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.settings_overflow:
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 
     @Override

@@ -84,7 +84,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Data> data = null;
         try {
-            data = new ArrayList<Data>();
+            data = new ArrayList<>();
             String QUERY = "SELECT * FROM " + TABLE_NAME;
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
@@ -93,26 +93,12 @@ public class Database extends SQLiteOpenHelper {
                     data.add(events);
                 }
             }
+            cursor.close();
             db.close();
         } catch (Exception e) {
             Log.e("error", e + "");
         }
         return data;
-    }
-
-    public int getEventsCount() {
-        int num = 0;
-        SQLiteDatabase db = this.getReadableDatabase();
-        try {
-            String QUERY = "SELECT * FROM " + TABLE_NAME;
-            Cursor cursor = db.rawQuery(QUERY, null);
-            num = cursor.getCount();
-            db.close();
-            return num;
-        } catch (Exception e) {
-            Log.e("error", e + "");
-        }
-        return 0;
     }
 
 }

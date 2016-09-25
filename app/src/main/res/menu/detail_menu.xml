@@ -7,15 +7,6 @@
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="ifRoom" />
     <item
-        android:title="@string/demographics"
-        app:showAsAction="never"
-        android:id="@+id/pieChart" />
-    <item
-        android:title="@string/favorite"
-        android:icon="@drawable/heart"
-        app:showAsAction="ifRoom"
-        android:id="@+id/favorite_icon"/>
-    <item
         android:title="@string/settings"
         app:showAsAction="never"
         android:orderInCategory="100"

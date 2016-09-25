@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="@string/demographics"
+        app:showAsAction="never"
+        android:id="@+id/pieChart" />
+    <item
+        android:title="@string/favorite"
+        android:icon="@drawable/heart"
+        app:showAsAction="ifRoom"
+        android:id="@+id/favorite_icon"/>
+    <item
+        android:title="@string/settings"
+        app:showAsAction="never"
+        android:orderInCategory="100"
+        android:id="@+id/settings_overflow" />
 </menu>
